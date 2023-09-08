@@ -21,6 +21,7 @@ def test_kmer_id():
 
 def compute_frequencies(seq, k):
     freqs = [0] * (4**k)
+    seq = seq.upper()
     for i in range(len(seq) - k + 1):
         codon = seq[i:i+k]
         # skip unknown nucleotides
@@ -44,6 +45,8 @@ if __name__ == "__main__":
             # header = [f"kmer{i}," for i in range(4 ** args.k)] + ["type"]
             # csv_writer.writerow(header)
             for record in SeqIO.parse(fasta_file, "fasta"):
-                freq = compute_frequencies(record.seq, args.k)
-                csv_writer.writerow(compute_frequencies(record.seq, args.k) + [args.classn])
+                for i in range(len(record.seq) - args.L + 1):
+                    lmer = record.seq[i:i+args.L]
+                    freq = compute_frequencies(lmer, args.k)
+                    csv_writer.writerow(compute_frequencies(record.seq, args.k) + [args.classn])
 
