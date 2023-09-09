@@ -35,18 +35,18 @@ if __name__ == "__main__":
     parser.add_argument("-k", type=int, default=3, help="k-mer size")
     parser.add_argument("-L", type=int, default=500, help="sequence length")
     parser.add_argument("--emb", type=str, default="spike2vec", help="embedding name")
-    parser.add_argument("--type", type=int, help="an integer identifying the class")
+    parser.add_argument("--label", type=int, help="an integer identifying the class")
 
     args = parser.parse_args()
 
     with open(args.file) as fasta_file:
         with open(args.file + ".csv", 'w') as csv_file:
             csv_writer = csv.writer(csv_file)
-            # header = [f"kmer{i}," for i in range(4 ** args.k)] + ["type"]
+            # header = [f"kmer{i}," for i in range(4 ** args.k)] + ["label"]
             # csv_writer.writerow(header)
             for record in SeqIO.parse(fasta_file, "fasta"):
                 for i in range(len(record.seq) - args.L + 1):
                     lmer = record.seq[i:i+args.L]
                     freq = compute_frequencies(lmer, args.k)
-                    csv_writer.writerow(compute_frequencies(record.seq, args.k) + [args.classn])
+                    csv_writer.writerow(compute_frequencies(record.seq, args.k) + [args.label])
 
