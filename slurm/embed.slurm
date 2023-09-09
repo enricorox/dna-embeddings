@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name encode
+#SBATCH --job-name embed
 #SBATCH --output logs/embed_%j.log
 #SBATCH --error logs/embed_%j.log
 #SBATCH --mail-user enrico.rossignolo@studenti.unipd.it
@@ -13,6 +13,8 @@
 
 source /nfsd/bcb/bcbg/rossigno/anaconda3/bin/activate
 conda activate dvf
+
+cd ..
 
 echo "Starting encoding virus sequences..."
 head -n 100 ~/bio/DeepVirFinder/datasets/training/virus-training.fa > virus.fa
