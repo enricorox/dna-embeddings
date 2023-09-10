@@ -48,5 +48,5 @@ if __name__ == "__main__":
                 for i in range(len(record.seq) - args.L + 1):
                     lmer = record.seq[i:i+args.L]
                     freq = compute_frequencies(lmer, args.k)
-                    csv_writer.writerow(compute_frequencies(record.seq, args.k) + [args.label])
+                    csv_writer.writerow(freq + [args.label])
 
