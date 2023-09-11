@@ -28,7 +28,7 @@ header=""
 for i in $(seq 1 $((4**3))); do
 	header+="kmer$i,"
 done
-header+="type"
+header+="label"
 echo $header > data.csv
 
 echo "Joining files..."
