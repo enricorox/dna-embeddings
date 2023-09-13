@@ -11,6 +11,7 @@
 #SBATCH --partition allgroups
 #SBATCH --mem 500G
 phase="training"
+# set to -1 for complete file
 num_lines=1000
 
 source /nfsd/bcb/bcbg/rossigno/anaconda3/bin/activate
@@ -23,11 +24,19 @@ host_file="temp-host-$phase.fa"
 csv_file="$phase-data.csv"
 
 echo "Starting encoding virus sequences..."
-head -n $num_lines ~/bio/DeepVirFinder/datasets/"$phase"/virus-"$phase".fa > "$virus_file"
+if [ "$num_lines" == "-1" ]; then
+  virus_file=~/bio/DeepVirFinder/datasets/"$phase"/virus-"$phase".fa
+else
+  head -n $num_lines ~/bio/DeepVirFinder/datasets/"$phase"/virus-"$phase".fa > "$virus_file"
+fi
 srun python embed.py -k 3 --file "$virus_file" --label 1
 
 echo "Starting encoding host sequences..."
-head -n $num_lines ~/bio/DeepVirFinder/datasets/"$phase"/host-"$phase".fa > "$host_file"
+if [ "$num_lines" == "-1" ]; then
+  host_file=~/bio/DeepVirFinder/datasets/"$phase"/host-"$phase".fa
+else
+  head -n $num_lines ~/bio/DeepVirFinder/datasets/"$phase"/host-"$phase".fa > "$host_file"
+fi
 srun python embed.py -k 3 --file "$host_file" --label 0
 
 header=""
