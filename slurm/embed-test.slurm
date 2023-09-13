@@ -23,7 +23,7 @@ virus_file="temp-virus-$phase.fa"
 host_file="temp-host-$phase.fa"
 csv_file="$phase-data.csv"
 
-echo "Starting encoding virus sequences..."
+echo "Encoding virus sequences for $phase..."
 if [ "$num_lines" == "-1" ]; then
   virus_file=~/bio/DeepVirFinder/datasets/"$phase"/virus-"$phase".fa
 else
@@ -31,7 +31,7 @@ else
 fi
 srun python embed.py -k 3 --file "$virus_file" --label 1
 
-echo "Starting encoding host sequences..."
+echo "Encoding host sequences for $phase..."
 if [ "$num_lines" == "-1" ]; then
   host_file=~/bio/DeepVirFinder/datasets/"$phase"/host-"$phase".fa
 else
