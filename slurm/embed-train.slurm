@@ -12,7 +12,7 @@
 #SBATCH --mem 500G
 phase="training"
 # set to -1 for complete file
-num_lines=1000
+num_lines=-1
 
 source /nfsd/bcb/bcbg/rossigno/anaconda3/bin/activate
 conda activate dvf
