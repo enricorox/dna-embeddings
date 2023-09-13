@@ -10,28 +10,34 @@
 #SBATCH --cpus-per-task 1
 #SBATCH --partition allgroups
 #SBATCH --mem 500G
+phase="training"
+num_lines=1000
 
 source /nfsd/bcb/bcbg/rossigno/anaconda3/bin/activate
 conda activate dvf
 
 cd ..
 
+virus_file="temp-virus-$phase.fa"
+host_file="temp-host-$phase.fa"
+csv_file="$phase-data.csv"
+
 echo "Starting encoding virus sequences..."
-head -n 100 ~/bio/DeepVirFinder/datasets/training/virus-training.fa > virus.fa
-srun python embed.py -k 3 --file virus.fa --label 1
+head -n $num_lines ~/bio/DeepVirFinder/datasets/"$phase"/virus-training.fa > "$virus_file"
+srun python embed.py -k 3 --file "$virus_file" --label 1
 
 echo "Starting encoding host sequences..."
-head -n 100 ~/bio/DeepVirFinder/datasets/training/host-training.fa > host.fa
-srun python embed.py -k 3 --file host.fa --label 0
+head -n $num_lines ~/bio/DeepVirFinder/datasets/"$phase"/host-training.fa > "$host_file"
+srun python embed.py -k 3 --file "$host_file" --label 0
 
 header=""
 for i in $(seq 1 $((4**3))); do
 	header+="kmer$i,"
 done
 header+="label"
-echo $header > data.csv
+echo $header > "$csv_file"
 
 echo "Joining files..."
-cat virus.fa.csv host.fa.csv >> data.csv
-rm virus.fa{,.csv} host.fa{,.csv}
+cat "$virus_file".csv "$host_file".csv >> $csv_file
+rm "$virus_file"{,.csv} "$host_file"{,.csv}
 echo "Done."
