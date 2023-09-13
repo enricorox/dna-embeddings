@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH --job-name embed-test
-#SBATCH --output logs/embed_%j.log
-#SBATCH --error logs/embed_%j.log
+#SBATCH --output logs/embed_test.log
+#SBATCH --error logs/embed_test.log
 #SBATCH --mail-user enrico.rossignolo@studenti.unipd.it
 #SBATCH --mail-type ALL
 #SBATCH
@@ -23,11 +23,11 @@ host_file="temp-host-$phase.fa"
 csv_file="$phase-data.csv"
 
 echo "Starting encoding virus sequences..."
-head -n $num_lines ~/bio/DeepVirFinder/datasets/"$phase"/virus-training.fa > "$virus_file"
+head -n $num_lines ~/bio/DeepVirFinder/datasets/"$phase"/virus-"$phase".fa > "$virus_file"
 srun python embed.py -k 3 --file "$virus_file" --label 1
 
 echo "Starting encoding host sequences..."
-head -n $num_lines ~/bio/DeepVirFinder/datasets/"$phase"/host-training.fa > "$host_file"
+head -n $num_lines ~/bio/DeepVirFinder/datasets/"$phase"/host-"$phase".fa > "$host_file"
 srun python embed.py -k 3 --file "$host_file" --label 0
 
 header=""
