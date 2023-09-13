@@ -21,14 +21,12 @@ def test_kmer_id():
 
 def compute_frequencies(seq, k):
     freqs = [0] * (4**k)
-    unknowns = 0
-    uncertains = 0
     seq = seq.upper()
 
     for j in range(len(seq) - k + 1):
         codon = seq[j:j+k]
         freqs[kmer_id(codon)] += 1
-    return freqs, unknowns, uncertains
+    return freqs
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='DNA sequence embedder')
@@ -63,7 +61,7 @@ if __name__ == "__main__":
                             unknowns += 1
                             continue
 
-                        freq, unknowns, uncertains = compute_frequencies(lmer, args.k)
+                        freq = compute_frequencies(lmer, args.k)
                         csv_writer.writerow(freq + [args.label])
                         tot_count += 1
     elif args.emb == "sec2vec":
@@ -85,7 +83,7 @@ if __name__ == "__main__":
                             unknowns += 1
                             continue
 
-                        freq, unknowns, uncertains = compute_frequencies(lmer, args.k)
+                        freq = compute_frequencies(lmer, args.k)
                         csv_writer.writerow(freq + [args.label])
                         tot_count += 1
 
