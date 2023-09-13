@@ -29,7 +29,7 @@ def compute_frequencies(seq, k):
 
 def check_char(lmer):
     for c in lmer:
-        if not (c != 'A' and c != 'C' and c != 'T' and c != 'G' and c != 'U'):
+        if c != 'A' and c != 'C' and c != 'T' and c != 'G' and c != 'U':
             return False
     return True
 
