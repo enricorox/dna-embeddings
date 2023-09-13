@@ -34,19 +34,39 @@ if __name__ == "__main__":
     parser.add_argument("--file", type=str, help="fasta file to embed")
     parser.add_argument("-k", type=int, default=3, help="k-mer size")
     parser.add_argument("-L", type=int, default=500, help="sequence length")
-    parser.add_argument("--emb", type=str, default="spike2vec", help="embedding name")
+    parser.add_argument("--emb", type=str, default="sec2vec", help="embedding name")
     parser.add_argument("--label", type=int, help="an integer identifying the class")
 
     args = parser.parse_args()
 
-    with open(args.file) as fasta_file:
-        with open(args.file + ".csv", 'w') as csv_file:
-            csv_writer = csv.writer(csv_file)
-            # header = [f"kmer{i}," for i in range(4 ** args.k)] + ["label"]
-            # csv_writer.writerow(header)
-            for record in SeqIO.parse(fasta_file, "fasta"):
-                for i in range(len(record.seq) - args.L + 1):
-                    lmer = record.seq[i:i+args.L]
-                    freq = compute_frequencies(lmer, args.k)
-                    csv_writer.writerow(freq + [args.label])
+    print(f"Start embedding with {args.emb}...")
 
+    count = 0
+    if args.emb == "sec2vec-overlapping":
+        with open(args.file) as fasta_file:
+            with open(args.file + ".csv", 'w') as csv_file:
+                csv_writer = csv.writer(csv_file)
+                # header = [f"kmer{i}," for i in range(4 ** args.k)] + ["label"]
+                # csv_writer.writerow(header)
+                for record in SeqIO.parse(fasta_file, "fasta"):
+                    for i in range(len(record.seq) - args.L + 1):
+                        lmer = record.seq[i:i+args.L]
+                        freq = compute_frequencies(lmer, args.k)
+                        csv_writer.writerow(freq + [args.label])
+                        count += 1
+    elif args.emb == "sec2vec":
+        with open(args.file) as fasta_file:
+            with open(args.file + ".csv", 'w') as csv_file:
+                csv_writer = csv.writer(csv_file)
+                # header = [f"kmer{i}," for i in range(4 ** args.k)] + ["label"]
+                # csv_writer.writerow(header)
+                for record in SeqIO.parse(fasta_file, "fasta"):
+                    for l in range(len(record.seq)//args.L):
+                        i = l * args.L
+                        lmer = record.seq[i:i+args.L]
+                        freq = compute_frequencies(lmer, args.k)
+                        csv_writer.writerow(freq + [args.label])
+                        count += 1
+
+    print(f"Embedded {count} sequences.")
+    print("Done!")
