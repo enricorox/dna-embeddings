@@ -3,7 +3,7 @@ import csv
 
 from Bio import SeqIO
 
-alphabet = {'A': 0, 'C': 1, 'T': 2, 'G': 3}
+alphabet = {'A': 0, 'C': 1, 'T': 2, 'G': 3, 'U': 2}
 def kmer_id(kmer):
     k_id = 0
     base = 1
@@ -21,13 +21,14 @@ def test_kmer_id():
 
 def compute_frequencies(seq, k):
     freqs = [0] * (4**k)
+    unknowns = 0
+    uncertains = 0
     seq = seq.upper()
+
     for j in range(len(seq) - k + 1):
         codon = seq[j:j+k]
-        # skip unknown nucleotides
-        if 'N' not in codon:
-            freqs[kmer_id(codon)] += 1
-    return freqs
+        freqs[kmer_id(codon)] += 1
+    return freqs, unknowns, uncertains
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='DNA sequence embedder')
@@ -41,7 +42,9 @@ if __name__ == "__main__":
 
     print(f"Start embedding with {args.emb}...")
 
-    count = 0
+    tot_count = 0
+    uncertains = 0
+    unknowns = 0
     if args.emb == "sec2vec-overlapping":
         with open(args.file) as fasta_file:
             with open(args.file + ".csv", 'w') as csv_file:
@@ -51,9 +54,18 @@ if __name__ == "__main__":
                 for record in SeqIO.parse(fasta_file, "fasta"):
                     for i in range(len(record.seq) - args.L + 1):
                         lmer = record.seq[i:i+args.L]
-                        freq = compute_frequencies(lmer, args.k)
+
+                        # skip unknown nucleotides
+                        if 'N' in lmer:
+                            uncertains += 1
+                            continue
+                        if not ('A' in lmer or 'C' in lmer or 'G' in lmer or 'T' in lmer or 'U' in lmer):
+                            unknowns += 1
+                            continue
+
+                        freq, unknowns, uncertains = compute_frequencies(lmer, args.k)
                         csv_writer.writerow(freq + [args.label])
-                        count += 1
+                        tot_count += 1
     elif args.emb == "sec2vec":
         with open(args.file) as fasta_file:
             with open(args.file + ".csv", 'w') as csv_file:
@@ -64,9 +76,21 @@ if __name__ == "__main__":
                     for l in range(len(record.seq)//args.L):
                         i = l * args.L
                         lmer = record.seq[i:i+args.L]
-                        freq = compute_frequencies(lmer, args.k)
-                        csv_writer.writerow(freq + [args.label])
-                        count += 1
 
-    print(f"Embedded {count} sequences with label {args.label}.")
+                        # skip unknown nucleotides
+                        if 'N' in lmer:
+                            uncertains += 1
+                            continue
+                        if not ('A' in lmer or 'C' in lmer or 'G' in lmer or 'T' in lmer or 'U' in lmer):
+                            unknowns += 1
+                            continue
+
+                        freq, unknowns, uncertains = compute_frequencies(lmer, args.k)
+                        csv_writer.writerow(freq + [args.label])
+                        tot_count += 1
+
+    print(f"Embedded sequences with label {args.label}:")
+    print(f"\tnumber of vectors: {tot_count}")
+    print(f"\tnumber of uncertain nucleotides: {uncertains}")
+    print(f"\tnumber of unknown nucleotides: {unknowns}")
     print("Done!")
