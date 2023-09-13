@@ -21,7 +21,6 @@ def test_kmer_id():
 
 def compute_frequencies(seq, k):
     freqs = [0] * (4**k)
-    seq = seq.upper()
 
     for j in range(len(seq) - k + 1):
         codon = seq[j:j+k]
@@ -52,6 +51,7 @@ if __name__ == "__main__":
                 for record in SeqIO.parse(fasta_file, "fasta"):
                     for i in range(len(record.seq) - args.L + 1):
                         lmer = record.seq[i:i+args.L]
+                        lmer = lmer.upper()
 
                         # skip unknown nucleotides
                         if 'N' in lmer:
@@ -74,6 +74,7 @@ if __name__ == "__main__":
                     for l in range(len(record.seq)//args.L):
                         i = l * args.L
                         lmer = record.seq[i:i+args.L]
+                        lmer = lmer.upper()
 
                         # skip unknown nucleotides
                         if 'N' in lmer:
