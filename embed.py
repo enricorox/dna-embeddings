@@ -68,5 +68,5 @@ if __name__ == "__main__":
                         csv_writer.writerow(freq + [args.label])
                         count += 1
 
-    print(f"Embedded {count} sequences.")
+    print(f"Embedded {count} sequences with label {args.label}.")
     print("Done!")
