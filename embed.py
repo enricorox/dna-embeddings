@@ -22,8 +22,8 @@ def test_kmer_id():
 def compute_frequencies(seq, k):
     freqs = [0] * (4**k)
     seq = seq.upper()
-    for i in range(len(seq) - k + 1):
-        codon = seq[i:i+k]
+    for j in range(len(seq) - k + 1):
+        codon = seq[j:j+k]
         # skip unknown nucleotides
         if 'N' not in codon:
             freqs[kmer_id(codon)] += 1
