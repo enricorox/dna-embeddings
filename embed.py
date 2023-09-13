@@ -27,6 +27,12 @@ def compute_frequencies(seq, k):
         freqs[kmer_id(codon)] += 1
     return freqs
 
+def check_char(lmer):
+    for c in lmer:
+        if not (c != 'A' and c != 'C' and c != 'T' and c != 'G' and c != 'U'):
+            return False
+    return True
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='DNA sequence embedder')
     parser.add_argument("--file", type=str, help="fasta file to embed")
@@ -57,7 +63,7 @@ if __name__ == "__main__":
                         if 'N' in lmer:
                             uncertains += 1
                             continue
-                        if not ('A' in lmer or 'C' in lmer or 'G' in lmer or 'T' in lmer or 'U' in lmer):
+                        if not check_char(lmer):
                             unknowns += 1
                             continue
 
@@ -80,7 +86,7 @@ if __name__ == "__main__":
                         if 'N' in lmer:
                             uncertains += 1
                             continue
-                        if not ('A' in lmer or 'C' in lmer or 'G' in lmer or 'T' in lmer or 'U' in lmer):
+                        if not check_char(lmer):
                             unknowns += 1
                             continue
 
