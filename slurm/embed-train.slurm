@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBATCH --job-name embed-train
-#SBATCH --output logs/embed_train.log
-#SBATCH --error logs/embed_train.log
+#SBATCH --output logs/embed_train_%j.log
+#SBATCH --error logs/embed_train_%j.log
 #SBATCH --mail-user enrico.rossignolo@studenti.unipd.it
 #SBATCH --mail-type ALL
 #SBATCH
