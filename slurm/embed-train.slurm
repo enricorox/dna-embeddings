@@ -11,8 +11,8 @@
 #SBATCH --partition allgroups
 #SBATCH --mem 500G
 phase="training"
-# set to -1 for complete file
 num_lines=100000
+whole=true
 
 source /nfsd/bcb/bcbg/rossigno/anaconda3/bin/activate
 conda activate dvf
@@ -24,7 +24,7 @@ host_file="temp-host-$phase.fa"
 csv_file="$phase-data.csv"
 
 echo "Encoding virus sequences for $phase..."
-if [ "$num_lines" == "-1" ]; then
+if [ "$whole" == "true" ]; then
   virus_file=~/bio/DeepVirFinder/datasets/"$phase"/virus-"$phase".fa
 else
   head -n $num_lines ~/bio/DeepVirFinder/datasets/"$phase"/virus-"$phase".fa > "$virus_file"
@@ -48,5 +48,6 @@ echo $header > "$csv_file"
 
 echo "Joining files..."
 cat "$virus_file".csv "$host_file".csv >> $csv_file
-rm "$virus_file"{,.csv} "$host_file"{,.csv}
+rm "$virus_file".csv "$host_file".csv
+[ "$whole" == "true" ] || rm "$virus_file" "$host_file"
 echo "Done."
