@@ -12,7 +12,7 @@
 #SBATCH --mem 500G
 phase="validation"
 num_lines=100000
-whole=true
+whole="true"
 
 source /nfsd/bcb/bcbg/rossigno/anaconda3/bin/activate
 conda activate dvf
@@ -25,16 +25,20 @@ csv_file="$phase-data.csv"
 
 echo "Encoding virus sequences for $phase..."
 if [ "$whole" == "true" ]; then
+  echo "Encoding whole virus file..."
   virus_file=~/bio/DeepVirFinder/datasets/"$phase"/virus-"$phase".fa
 else
+  echo "Encoding first $num_lines lines of virus file..."
   head -n $num_lines ~/bio/DeepVirFinder/datasets/"$phase"/virus-"$phase".fa > "$virus_file"
 fi
 srun python embed.py -k 3 --file "$virus_file" --label 1
 
 echo "Encoding host sequences for $phase..."
-if [ "$num_lines" == "-1" ]; then
+if [ "$whole" == "true" ]; then
+  echo "Encoding whole host file..."
   host_file=~/bio/DeepVirFinder/datasets/"$phase"/host-"$phase".fa
 else
+  echo "Encoding first $num_lines lines of host file..."
   head -n $num_lines ~/bio/DeepVirFinder/datasets/"$phase"/host-"$phase".fa > "$host_file"
 fi
 srun python embed.py -k 3 --file "$host_file" --label 0
